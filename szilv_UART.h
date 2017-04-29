@@ -22,14 +22,9 @@ extern "C" {
 #endif	/* SZILV_UART_H */
 
 
-
-#include <peripheral/uart.h>
-
 #define	GetSystemClock() 			(80000000ul)
 #define	GetPeripheralClock()		(GetSystemClock()/(1 << OSCCONbits.PBDIV))
 #define	GetInstructionClock()		(GetSystemClock())
 
 void initUART_1();
-void SendDataBuffer(const char *buffer, UINT32 size);
-UINT32 GetDataBuffer(char *buffer, UINT32 max_size);
-UINT8 LIntToChar(UINT32 x, UINT8 * buf);
+void SendDataBuffer(const char *buffer, int size);

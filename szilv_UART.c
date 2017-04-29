@@ -7,87 +7,47 @@
 
 
 #include "szilv_UART.h"
+#include <xc.h>
 
+#define txBufferFull U1STAbits.UTXBF
 
 
 void initUART_1(){
     //UART Init
-    UARTConfigure(UART1, UART_ENABLE_PINS_TX_RX_ONLY);
-    UARTSetFifoMode(UART1, UART_INTERRUPT_ON_TX_NOT_FULL | UART_INTERRUPT_ON_RX_NOT_EMPTY);
-    UARTSetLineControl(UART1, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
-    UARTSetDataRate(UART1, GetPeripheralClock(), 115200);
-    UARTEnable(UART1, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
+//    UARTConfigure(UART1, UART_ENABLE_PINS_TX_RX_ONLY);
+//    UARTSetFifoMode(UART1, UART_INTERRUPT_ON_TX_NOT_FULL | UART_INTERRUPT_ON_RX_NOT_EMPTY);
+//    UARTSetLineControl(UART1, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
+//    UARTSetDataRate(UART1, GetPeripheralClock(), 115200);
+//    UARTEnable(UART1, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
+    
+    // configure UART module 1
+    U1MODEbits.ON = 1;          // Enable UART1
+    U1MODEbits.IREN = 0;        // IrDA Encoder and Decoder disabled
+    U1MODEbits.UEN = 0b00;      // UART1 Enable bits, U1TX and U1RX pins are enabled and used;
+    U1MODEbits.ABAUD = 0;       // Baud rate measurement disabled
+    U1MODEbits.BRGH = 1;        // High-Speed mode – 4x baud clock enabled
+    U1MODEbits.PDSEL = 0b00;    // 8-bit data, no parity
+    U1MODEbits.STSEL = 0;       // 1 Stop bit
+    
+    U1STAbits.UTXEN = 1;        // Transmit Enable bit
+    U1STAbits.URXEN = 1;        // Receiver Enable bit
+    
+    // set baud rate
+//    U1BRG = 64; // 9600 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 0
+//    U1BRG = 10; // 57600 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 0
+    U1BRG = 21; // 115200 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 1
 }
 
 // *****************************************************************************
 // void UARTTxBuffer(char *buffer, UINT32 size)
 // *****************************************************************************
-void SendDataBuffer(const char *buffer, UINT32 size){
+void SendDataBuffer(const char *buffer, int size){
+    int i = 0;
+    
     while(size){
-        while(!UARTTransmitterIsReady(UART1));
-
-        UARTSendDataByte(UART1, *buffer);
-
-        buffer++;
+        while( txBufferFull ); // wait until the buffer is become not full
+        U1TXREG = buffer[i];        // push 8 bit data into transfer buffer register
         size--;
+        i++;
     }
-
-    while(!UARTTransmissionHasCompleted(UART1));
-}
-
-// *****************************************************************************
-// UINT32 GetDataBuffer(char *buffer, UINT32 max_size)
-// *****************************************************************************
-UINT32 GetDataBuffer(char *buffer, UINT32 max_size){
-    UINT32  num_char;
-
-    num_char = 0;
-
-    while(num_char < max_size){
-        UINT8 character;
-
-        while(!UARTReceivedDataIsAvailable(UART1));
-
-        character = UARTGetDataByte(UART1);
-
-        if(character == '\r')
-            break;
-
-        *buffer = character;
-
-        buffer++;
-        num_char++;
-    }
-
-    return num_char;
-}
-
-UINT8 LIntToChar(UINT32 x, UINT8 * buf){
-    UINT8   k,i;
-    UINT32  adat;
-
-    k = 0;
-    adat = x;
-    if (adat < 10)
-    {
-        buf[0] = (adat + 48);
-        return 1;
-    }
-    else {
-        while (adat > 0) {
-            adat = adat / 10;
-            k++;
-        }
-        i = k;
-        adat = x;
-       while (i>0)
-       {
-           i--;
-           buf[i] = adat % 10 + 48;
-           adat = adat / 10;
-       }
-    }
-    buf[k] = 13;            //Carriage return
-    buf[k + 1] = 10;        //New line feed
-    return k+2;
 }

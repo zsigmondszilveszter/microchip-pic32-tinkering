@@ -19,7 +19,7 @@
 #pragma config FPLLIDIV     = DIV_2     // PLL input divider
 #pragma config FPLLMUL      = MUL_20    // PLL multiplier
 #pragma config FPLLODIV     = DIV_1     // PLL output divider
-#pragma config FPBDIV       = DIV_2     // Peripheral bus clock divider
+#pragma config FPBDIV       = DIV_8     // Peripheral bus clock divider
 #pragma config FSOSCEN      = OFF       // Secondary oscillator enable
 
 // function declarations
@@ -74,12 +74,13 @@ void Init() {
 }
 
 void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void) {
-    LATFINV = 1; // invert the led bit status
+//    LATFINV = 1; // invert the LATF LSB(last significant bit) - it is connected to a led
     TMR1CLR = 0xFFFF; // clear the timer count register
 
     IFS0bits.T1IF = 0; // clear timer1 interrupt status flag
     
-    SendDataBuffer("Hello World\n",12);
+    char * str = "Something longer than a short text\n";
+    SendDataBuffer(str,strlen(str));
 }
 
 
