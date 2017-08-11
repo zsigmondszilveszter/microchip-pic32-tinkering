@@ -33,9 +33,9 @@ void initUART_1(){
     U1STAbits.URXEN = 1;        // Receiver Enable bit
     
     // set baud rate
-//    U1BRG = 64; // 9600 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 0
+    U1BRG = 64; // 9600 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 0
 //    U1BRG = 10; // 57600 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 0
-    U1BRG = 21; // 115200 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 1
+//    U1BRG = 21; // 115200 with 10Mhz PBCLK(Pheripheral Bus Clock) and BRGH = 1
 }
 
 // *****************************************************************************

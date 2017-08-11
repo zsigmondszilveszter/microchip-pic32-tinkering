@@ -79,7 +79,7 @@ void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void) {
 
     IFS0bits.T1IF = 0; // clear timer1 interrupt status flag
     
-    char * str = "Something longer than a short text\n";
+    char * str = "Welcome to Szilveszter's development board\n";
     SendDataBuffer(str,strlen(str));
 }
 
