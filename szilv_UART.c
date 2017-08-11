@@ -25,7 +25,7 @@ void initUART_1(){
     U1MODEbits.IREN = 0;        // IrDA Encoder and Decoder disabled
     U1MODEbits.UEN = 0b00;      // UART1 Enable bits, U1TX and U1RX pins are enabled and used;
     U1MODEbits.ABAUD = 0;       // Baud rate measurement disabled
-    U1MODEbits.BRGH = 1;        // High-Speed mode – 4x baud clock enabled
+    U1MODEbits.BRGH = 0;        // High-Speed mode – 4x baud clock enabled
     U1MODEbits.PDSEL = 0b00;    // 8-bit data, no parity
     U1MODEbits.STSEL = 0;       // 1 Stop bit
     
