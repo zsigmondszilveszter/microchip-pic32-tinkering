@@ -10,7 +10,6 @@
 #include <string.h>
 #include <xc.h>
 #include <sys/attribs.h>
-#include "szilv_UART.h"
 
 /* Oscillator Settings00000
  */
@@ -22,8 +21,20 @@
 #pragma config FPBDIV       = DIV_8     // Peripheral bus clock divider
 #pragma config FSOSCEN      = OFF       // Secondary oscillator enable
 
+
+/*
+ * Szilveszter serial communication 
+ */
+#include "szilv_UART.h"
+
+/*
+ * Microchip TCP/IP stack
+ */
+#include "tcpip/tcpip.h"
+
 // function declarations
 void Init();
+void debugMessage(char * str);
 
 // interrupt handlers declarations
 void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void);
@@ -59,28 +70,33 @@ void Init() {
     INTCONbits.SS0 = 0;                 // Single vector is not presented with a shadow register set
     INTCONbits.TPC = 0b000;             // Disables proximity timer
 
-    // set up timer1
-    T1CONbits.TCS = 0;                  // clock source = Internal peripheral clock
-    T1CONbits.TCKPS = 0b11;             // Timer Input Clock Prescale Select bits
-    PR1SET = 39062;                     // period register, when this register is match 
+    // set up timer2
+    T2CONCLR = 0b10;                  // clock source = Internal peripheral clock
+    T2CONbits.TCKPS = 0b111;             // Timer Input Clock Prescale Select bits
+    PR2SET = 39062;                     // period register, when this register is match 
                                         // with the count register an interrupt occurs
-    IEC0bits.T1IE = 1;                  // enable interrupt for timer1
-    IPC1bits.T1IP = 0b111;              // priority level is 7
-    IPC1bits.T1IS = 0;                  // sub priority is 0
-    T1CONbits.ON = 1;                   // turn on the timer1
+    IEC0bits.T2IE = 1;                  // enable interrupt for timer2
+    IPC2bits.T2IP = 0b111;              // priority level is 7
+    IPC2bits.T2IS = 0;                  // sub priority is 0
+    T2CONbits.ON = 1;                   // turn on the timer2
     
     // init UART module1
     initUART_1();
+    debugMessage("Welcome to Szilveszter's development board\n");
+    debugMessage("UART initialized\n");
+    
+    // init TCP/IP stack
+    InitAppConfig();
+    debugMessage("TCP stack initialized\n");
 }
 
-void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void) {
-//    LATFINV = 1; // invert the LATF LSB(last significant bit) - it is connected to a led
-    TMR1CLR = 0xFFFF; // clear the timer count register
-
-    IFS0bits.T1IF = 0; // clear timer1 interrupt status flag
+void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
+    LATFINV = 1; // invert the LATF LSB(last significant bit) - it is connected to a led
     
-    char * str = "Welcome to Szilveszter's development board\n";
+    TMR2CLR = 0xFFFF; // clear the timer count register
+    IFS0bits.T2IF = 0; // clear timer1 interrupt status flag
+}
+
+void debugMessage(char * str){
     SendDataBuffer(str,strlen(str));
 }
-
-
