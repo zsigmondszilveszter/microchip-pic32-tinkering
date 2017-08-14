@@ -32,13 +32,13 @@
 #define WF_HIBERNATE_IO     (PORTBbits.RB3)
 #define MRF24W_IN_SPI2      true
 #define WF_INT_EDGE         (INTCONbits.INT1EP)
-#define WF_INT_IE           (IEC0bits.T1IE)
-#define WF_INT_IF           (IFS0bits.T1IF)
+#define WF_INT_IE           (IEC0bits.INT1IE)
+#define WF_INT_IF           (IFS0bits.INT1IF)
 
-#define WF_INT_IE_CLEAR     IEC1CLR
-#define WF_INT_IF_CLEAR     IFS1CLR
-#define WF_INT_IE_SET       IEC1SET
-#define WF_INT_IF_SET       IFS1SET
+#define WF_INT_IE_CLEAR     IEC0CLR
+#define WF_INT_IF_CLEAR     IFS0CLR
+#define WF_INT_IE_SET       IEC0SET
+#define WF_INT_IF_SET       IFS0SET
 #define WF_INT_BIT          0x00000080
 #define WF_INT_IPCSET       IPC1SET
 #define WF_INT_IPCCLR       IPC1CLR

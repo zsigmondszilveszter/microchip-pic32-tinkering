@@ -288,7 +288,7 @@ void WF_EintInit(void)
  * PIC32 INTERRUPT SERVICE ROUTINE
  *****************************************************************************/
 #if defined( MRF24W_IN_SPI2 )
-void __attribute((interrupt(ipl3AUTO), vector(_EXTERNAL_3_VECTOR), nomips16)) _WFInterrupt(void)
+void __attribute((interrupt(ipl3AUTO), vector(_EXTERNAL_1_VECTOR), nomips16)) _WFInterrupt(void)
 #else /* MRF24W_IN_SPI1 */
 void __attribute((interrupt(ipl3AUTO), vector(_EXTERNAL_1_VECTOR), nomips16)) _WFInterrupt(void)
 #endif

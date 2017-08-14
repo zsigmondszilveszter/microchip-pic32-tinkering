@@ -71,14 +71,13 @@ void Init() {
     INTCONbits.TPC = 0b000;             // Disables proximity timer
 
     // set up timer2
-    T2CONCLR = 0b10;                  // clock source = Internal peripheral clock
-    T2CONbits.TCKPS = 0b111;             // Timer Input Clock Prescale Select bits
+    T2CONCLR = 0b10;                    // clock source = Internal peripheral clock
+    T2CONbits.TCKPS = 0b111;            // Timer Input Clock Prescale Select bits
     PR2SET = 39062;                     // period register, when this register is match 
                                         // with the count register an interrupt occurs
     IEC0bits.T2IE = 1;                  // enable interrupt for timer2
     IPC2bits.T2IP = 0b111;              // priority level is 7
     IPC2bits.T2IS = 0;                  // sub priority is 0
-    T2CONbits.ON = 1;                   // turn on the timer2
     
     // init UART module1
     initUART_1();
@@ -86,8 +85,13 @@ void Init() {
     debugMessage("UART initialized\n");
     
     // init TCP/IP stack
+    TickInit();
     InitAppConfig();
+    StackInit();
     debugMessage("TCP stack initialized\n");
+    
+    
+    T2CONbits.ON = 1;                   // turn on the timer2
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
@@ -95,6 +99,9 @@ void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
     
     TMR2CLR = 0xFFFF; // clear the timer count register
     IFS0bits.T2IF = 0; // clear timer1 interrupt status flag
+    
+    StackTask();
+    StackApplications();
 }
 
 void debugMessage(char * str){
