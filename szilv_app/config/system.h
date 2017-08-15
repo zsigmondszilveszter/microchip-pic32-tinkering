@@ -18,6 +18,7 @@
 #define SYS_CLK_FrequencyPeripheralGet()  (GetPeripheralClock()) 
 
 void InitAppConfig(void);
+void WF_Connect(void);
 
 #endif	/* SYSTEM_H */
 

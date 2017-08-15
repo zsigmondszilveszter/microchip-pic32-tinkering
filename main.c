@@ -5,9 +5,6 @@
  * Created on April 17, 2017, 3:07 PM
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <xc.h>
 #include <sys/attribs.h>
 
@@ -45,6 +42,11 @@ void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void);
 int main(int argc, char** argv) {
 
     Init();
+    
+    while(1) {
+        StackTask();
+        StackApplications();
+    }
 
     return (EXIT_SUCCESS);
 }
@@ -54,6 +56,7 @@ int main(int argc, char** argv) {
  */
 void Init() {
 
+    TRISBbits.TRISB4 = 1;
     //Port Init
     TRISFbits.TRISF0 = 0;       //LED0 as output
     //    TRISFbits.TRISF1 = 0;                       //LED1 as output
@@ -73,6 +76,7 @@ void Init() {
     // set up timer2
     T2CONCLR = 0b10;                    // clock source = Internal peripheral clock
     T2CONbits.TCKPS = 0b111;            // Timer Input Clock Prescale Select bits
+//    PR2SET = 1000;
     PR2SET = 39062;                     // period register, when this register is match 
                                         // with the count register an interrupt occurs
     IEC0bits.T2IE = 1;                  // enable interrupt for timer2
@@ -81,17 +85,21 @@ void Init() {
     
     // init UART module1
     initUART_1();
-    debugMessage("Welcome to Szilveszter's development board\n");
-    debugMessage("UART initialized\n");
+    debugMessage("Welcome to Szilveszter's development board");
+    debugMessage("UART initialized");
     
     // init TCP/IP stack
     TickInit();
     InitAppConfig();
     StackInit();
-    debugMessage("TCP stack initialized\n");
-    
+    debugMessage("TCP stack initialized");
     
     T2CONbits.ON = 1;                   // turn on the timer2
+    
+    #if defined(WF_CS_TRIS)
+        WF_Connect();
+        debugMessage("Connecting");
+    #endif
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
@@ -99,11 +107,15 @@ void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
     
     TMR2CLR = 0xFFFF; // clear the timer count register
     IFS0bits.T2IF = 0; // clear timer1 interrupt status flag
-    
-    StackTask();
-    StackApplications();
 }
 
 void debugMessage(char * str){
     SendDataBuffer(str,strlen(str));
+    
+    // send new line feed
+    char buf[2] = {0};
+    sprintf(buf,"\n");
+    SendDataBuffer(buf,strlen(buf));
 }
+
+

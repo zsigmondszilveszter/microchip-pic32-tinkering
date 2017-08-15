@@ -203,11 +203,16 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // combination.  The values below are derived from the SSID "MicrochipDemoAPP" and the pass phrase
 // "Microchip 802.11 Secret PSK Password".
 // The tool at http://www.wireshark.org/tools/wpa-psk.html can be used to generate this field.
-#define MY_DEFAULT_PSK (\
-"\x06\x19\xFC\x85\xEE\xFE\xD8\x2B"\
-"\xE0\x19\x95\x77\x9A\xDA\x7B\x38"\
-"\xD6\x73\x2A\x32\x98\x1C\x1B\x30"\
-"\x32\x0A\xBF\xFA\x29\x70\x23\x52")
+//#define MY_DEFAULT_PSK (\
+//"\x06\x19\xFC\x85\xEE\xFE\xD8\x2B"\
+//"\xE0\x19\x95\x77\x9A\xDA\x7B\x38"\
+//"\xD6\x73\x2A\x32\x98\x1C\x1B\x30"\
+//"\x32\x0A\xBF\xFA\x29\x70\x23\x52")
+    #define MY_DEFAULT_PSK (\
+"\xfd\x48\x2e\xf0\xb3\xd0\x38\xfb"\
+"\x4a\x6f\x25\xf7\xf9\x1f\x04\x34"\
+"\x78\xd3\x96\x90\xd7\x71\x85\x4f"\
+"\xb3\x52\x26\xab\x09\x55\xa4\xf8")
 // Do not indent above string as it will inject spaces
 
 /*** Selecting Event Notification Type ***/

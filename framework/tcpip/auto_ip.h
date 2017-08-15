@@ -3,13 +3,13 @@
     Microchip Technology Inc.
 
   File Name:
-    uart.h
+    auto_ip.h
 
   Summary:
     
 
   Description:
-    UART access routines for C18 and C30
+    AutoIP Defs for Microchip TCP/IP Stack
 
  *******************************************************************************/
 
@@ -38,39 +38,34 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
  *******************************************************************************/
 //DOM-IGNORE-END
 
-#ifndef __UART_H_
-#define __UART_H_
+#ifndef __AUTO_IP_H_
+#define __AUTO_IP_H_
 
-//#include "system_config.h"
+// AutoIP State Machine
 
-#if defined(__XC8) // PIC18
-char BusyUART(void);
-void CloseUART(void);
-char DataRdyUART(void);
-char ReadUART(void);
-void WriteUART(char data);
-void getsUART(char *buffer, unsigned char len);
-void putsUART(char *data);
-void putrsUART(const rom char *data);
-#elif defined(__XC16) // PIC24F, PIC24H, dsPIC30, dsPIC33
-void putsUART2(unsigned int *buffer);
-#define putrsUART2(x) putsUART2( (unsigned int *)x)
-unsigned int getsUART2(unsigned int length, unsigned int *buffer,
-        unsigned int uart_data_wait);
-char DataRdyUART2(void);
-char BusyUART2(void);
-unsigned int ReadUART2(void);
-void WriteUART2(unsigned int data);
-#elif defined(__XC32)
-//#define putrsUART2(x) putsUART2(x)
-char BusyUART(void);
-void CloseUART(void);
-char DataRdyUART(void);
-char ReadUART(void);
-void WriteUART(char data);
-void getsUART(char *buffer, unsigned char len);
-void putsUART(char *data);
-void putrsUART(const char *data);
-#endif
+typedef enum _SM_AUTOIP {
+    SM_AUTOIP_DISABLED = 0,
+    SM_AUTOIP_INIT_RNG,
+    SM_AUTOIP_CHECK_ADDRESS,
+    SM_AUTOIP_SETUP_MESSAGE,
+    SM_AUTOIP_GRATUITOUS_ARP1,
+    SM_AUTOIP_GRATUITOUS_ARP2,
+    SM_AUTOIP_GRATUITOUS_ARP3,
+    SM_AUTOIP_DELAY,
+    SM_AUTOIP_RATE_LIMIT_SET,
+    SM_AUTOIP_RATE_LIMIT_WAIT,
+    SM_AUTOIP_CONFIGURED,
+    SM_AUTOIP_DEFEND
+} SM_AUTOIP;
+
+// Function prototypes
+void AutoIPInit(uint8_t vInterface);
+void AutoIPTasks(void);
+void AutoIPConflict(uint8_t vInterface);
+bool AutoIPIsConfigured(uint8_t vInterface);
+bool AutoIPConfigIsInProgress(uint8_t vInterface);
+bool AutoIPIsDisabled(uint8_t vInterface);
+void AutoIPDisable(uint8_t vInterface);
+void AutoIPEnable(uint8_t vInterface);
 
 #endif

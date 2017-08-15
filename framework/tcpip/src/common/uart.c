@@ -247,7 +247,75 @@ void WriteUART2(unsigned int data)
     else
         U2TXREG = data & 0xFF;
 }
+#elif defined(__XC32) // added support for pic32 by Szilveszter
 
+char BusyUART(void)
+{
+    return U1STAbits.UTXBF;
+//    return !TXSTAbits.TRMT;
+}
+
+void CloseUART(void)
+{
+//    RCSTA &= 0x4F; // Disable the receiver
+//    TXSTAbits.TXEN = 0; // and transmitter
+//
+//    PIE1 &= 0xCF; // Disable both interrupts
+}
+
+char DataRdyUART(void)
+{
+    return 0;
+//    if (RCSTAbits.OERR) {
+//        RCSTAbits.CREN = 0;
+//        RCSTAbits.CREN = 1;
+//    }
+//    return PIR1bits.RCIF;
+}
+
+char ReadUART(void)
+{
+//    return RCREG; // Return the received data
+}
+
+void WriteUART(char data)
+{
+//    TXREG = data; // Write the data byte to the USART
+}
+
+void getsUART(char *buffer, unsigned char len)
+{
+    char i; // Length counter
+    unsigned char data;
+
+    for (i = 0; i < len; i++) // Only retrieve len characters
+    {
+        while (!DataRdyUART()); // Wait for data to be received
+
+        data = ReadUART(); // Get a character from the USART
+        // and save in the string
+        *buffer = data;
+        buffer++; // Increment the string pointer
+    }
+}
+
+void putsUART(char *data)
+{
+    debugMessage(data);
+//    do { // Transmit a byte
+//        while (BusyUART());
+//        WriteUART(*data);
+//    } while (*data++);
+}
+
+void putrsUART(const char *data)
+{
+    putsUART( (char *)data);
+//    do { // Transmit a byte
+//        while (BusyUART());
+//        WriteUART(*data);
+//    } while (*data++);
+}
 #endif
 
 #endif // STACK_USE_UART

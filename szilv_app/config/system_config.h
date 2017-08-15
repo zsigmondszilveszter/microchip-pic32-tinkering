@@ -54,7 +54,7 @@
 #define WF_SPI_IF_CLEAR     IFS1CLR
 #define WF_SPI_INT_BITS     0x03800000
 #define WF_SPI_BRG          (SPI2BRG)
-#define WF_MAX_SPI_FREQ     (25000000ul)    // Hz
+#define WF_MAX_SPI_FREQ     (15000000ul)    // Hz
 
 // Compiler information
 //------------------------------------------------------------------------------

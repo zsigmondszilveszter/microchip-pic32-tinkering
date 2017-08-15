@@ -24,13 +24,13 @@
  *
  */
 
-//#define STACK_USE_UART                         // Application demo using UART for IP address display and stack configuration
+#define STACK_USE_UART                         // Application demo using UART for IP address display and stack configuration
 //#define STACK_USE_UART2TCP_BRIDGE            // UART to TCP Bridge application example
 //#define STACK_USE_IP_GLEANING
 #define STACK_USE_ICMP_SERVER                  // Ping query and response capability
 //#define STACK_USE_ICMP_CLIENT                // Ping transmission capability
 //#define STACK_USE_HTTP2_SERVER                 // New HTTP server with POST, Cookies, Authentication, etc.
-//#define STACK_USE_AUTO_IP                    // Dynamic link-layer IP address automatic configuration protocol
+#define STACK_USE_AUTO_IP                    // Dynamic link-layer IP address automatic configuration protocol
 #define STACK_USE_DHCP_CLIENT                  // Dynamic Host Configuration Protocol client for obtaining IP address and other parameters
 //#define STACK_USE_DHCP_SERVER                // Single host DHCP server
 //#define STACK_USE_FTP_SERVER                 // File Transfer Protocol (old)
@@ -105,7 +105,7 @@
  *   To clear EEPROM, hold BUTTON0, reset the board, and continue
  *   holding until the LEDs flash.  Release, and reset again.
  */
-#define MY_DEFAULT_HOST_NAME            "MCHPBOARD"
+#define MY_DEFAULT_HOST_NAME            "Szilv_PicBoard"
 
 #define MY_DEFAULT_MAC_BYTE1            (0x00)  // Use the default of 00-04-A3-00-00-00
 #define MY_DEFAULT_MAC_BYTE2            (0x04)  // if using an ENCX24J600, MRF24WB0M, or

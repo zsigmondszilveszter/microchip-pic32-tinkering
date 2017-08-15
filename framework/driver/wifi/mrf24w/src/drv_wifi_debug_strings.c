@@ -975,11 +975,7 @@ static bool ValidatePinChecksum(unsigned long int pin)
 #define WIFI_ASSERT_STRING "WiFi Assert    M:"
 
 void WF_AssertionFailed(uint8_t moduleNumber, uint16_t lineNumber)
-{
-    char buf[50];
-    sprintf(buf, "itt kiakad line:%d\n", lineNumber);
-    debugMessage(buf);
-    
+{   
 #if defined(STACK_USE_UART)
     char buf[64];
 #if defined(DISPLAY_FILENAME)
