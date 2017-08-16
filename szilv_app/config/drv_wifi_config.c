@@ -119,10 +119,10 @@ void WF_ProcessEvent(uint8_t event, uint16_t eventInfo, uint8_t *extraInfo)
     switch (event) {
     /*--------------------------------------*/
     case WF_EVENT_CONNECTION_SUCCESSFUL:
-    /*--------------------------------------*/
-#if defined(STACK_USE_UART)
-        putrsUART("Event: Connection Successful\r\n");
-#endif
+        /*--------------------------------------*/
+        #if defined(STACK_USE_UART)
+            putrsUART("Event: Connection Successful\r\n");
+        #endif
         break;
 
     /*--------------------------------------*/

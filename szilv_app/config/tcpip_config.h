@@ -10,6 +10,10 @@
 
 #include <stdint.h>
 
+//Szilveszter 
+#define tcpSocketTxBufferSize 256
+#define tcpSocketRxBufferSize 128
+
 // =======================================================================
 //   Application Options
 // =======================================================================
@@ -30,8 +34,8 @@
 #define STACK_USE_ICMP_SERVER                  // Ping query and response capability
 //#define STACK_USE_ICMP_CLIENT                // Ping transmission capability
 //#define STACK_USE_HTTP2_SERVER                 // New HTTP server with POST, Cookies, Authentication, etc.
-#define STACK_USE_AUTO_IP                    // Dynamic link-layer IP address automatic configuration protocol
-#define STACK_USE_DHCP_CLIENT                  // Dynamic Host Configuration Protocol client for obtaining IP address and other parameters
+//#define STACK_USE_AUTO_IP                    // Dynamic link-layer IP address automatic configuration protocol
+//#define STACK_USE_DHCP_CLIENT                  // Dynamic Host Configuration Protocol client for obtaining IP address and other parameters
 //#define STACK_USE_DHCP_SERVER                // Single host DHCP server
 //#define STACK_USE_FTP_SERVER                 // File Transfer Protocol (old)
 //#define STACK_USE_SMTP_CLIENT                  // Simple Mail Transfer Protocol for sending email
@@ -40,7 +44,7 @@
 //#define STACK_USE_GENERIC_TCP_SERVER_EXAMPLE // ToUpper server example in generic_tcp_server.c
 //#define STACK_USE_TELNET_SERVER              // Telnet server
 //#define STACK_USE_ANNOUNCE                   // Microchip Embedded Ethernet Device Discoverer server/client
-#define STACK_USE_DNS_CLIENT                   // Domain Name Service Client for resolving hostname strings to IP addresses
+//#define STACK_USE_DNS_CLIENT                   // Domain Name Service Client for resolving hostname strings to IP addresses
 //#define STACK_USE_DNS_SERVER                 // Domain Name Service Server for redirection to the local device
 //#define STACK_USE_NBNS                       // NetBIOS Name Service Server for repsonding to NBNS hostname broadcast queries
 //#define STACK_USE_REBOOT_SERVER              // Module for resetting this PIC remotely.  Primarily useful for a Bootloader.
@@ -117,7 +121,7 @@
 #define MY_DEFAULT_IP_ADDR_BYTE1        (192ul)
 #define MY_DEFAULT_IP_ADDR_BYTE2        (168ul)
 #define MY_DEFAULT_IP_ADDR_BYTE3        (0ul)
-#define MY_DEFAULT_IP_ADDR_BYTE4        (211ul)
+#define MY_DEFAULT_IP_ADDR_BYTE4        (200ul)
 
 #define MY_DEFAULT_MASK_BYTE1           (255ul)
 #define MY_DEFAULT_MASK_BYTE2           (255ul)
@@ -172,7 +176,7 @@
  *   based on module selections above.  If your custom module
  *   requires them otherwise, enable them here.
  */
-//#define STACK_USE_TCP
+#define STACK_USE_TCP
 //#define STACK_USE_UDP
 
 /* Client Mode Configuration
@@ -190,7 +194,7 @@
 // Allocate how much total RAM (in bytes) you want to allocate
 // for use by your TCP TCBs, RX FIFOs, and TX FIFOs.
 #define TCP_ETH_RAM_SIZE                    1 // Old MLA UDP Performace Test: 8192ul; TCP Performace Test: 8951ul
-#define TCP_PIC_RAM_SIZE                    (0ul)
+#define TCP_PIC_RAM_SIZE                    (512ul)
 #define TCP_SPI_RAM_SIZE                    (0ul)
 #define TCP_SPI_RAM_BASE_ADDRESS            (0x00)
 
@@ -231,6 +235,9 @@ const struct {
     uint16_t wTXBufferSize;
     uint16_t wRXBufferSize;
 } TCPSocketInitializer[] = {
+    //Szilveszter
+    {TCP_PURPOSE_GENERIC_TCP_CLIENT, TCP_PIC_RAM, tcpSocketTxBufferSize, tcpSocketRxBufferSize},
+    
     // If you want to enable STACK_USE_GENERIC_TCP_CLIENT_EXAMPLE,
     // STACK_USE_GENERIC_TCP_SERVER_EXAMPLE and STACK_USE_IPERF at
     // the same time, you might need to configure these sockets to be smaller

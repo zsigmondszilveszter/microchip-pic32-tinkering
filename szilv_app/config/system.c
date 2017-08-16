@@ -53,6 +53,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0') 
 
+bool expeciton_sent = false;
+
 // Used for Wi-Fi assertions
 #define WF_MODULE_NUMBER WF_MODULE_MAIN_DEMO
 // Declare AppConfig structure and some other supporting stack variables
@@ -90,7 +92,10 @@ void _general_exception_handler(unsigned cause, unsigned status)
 {
     Nop();
     Nop();
-    debugMessage("exception");
+//    if( !expeciton_sent){
+        debugMessage("An Exception occured");
+        expeciton_sent = true;
+//    }
 }
 #endif
 

@@ -19,26 +19,46 @@
 #pragma config FSOSCEN      = OFF       // Secondary oscillator enable
 
 
-/*
- * Szilveszter serial communication 
- */
+/* *****************************************************************************
+ * Szilveszter 
+ * ****************************************************************************/
+// serial communication 
 #include "szilv_UART.h"
-
-/*
- * Microchip TCP/IP stack
- */
+//Microchip TCP/IP stack
 #include "tcpip/tcpip.h"
+// tcp socket
+#include "szilv_tcp_socket.h"
 
-// function declarations
+/* *****************************************************************************
+ * Const
+ * ****************************************************************************/
+#define welcome_message                 "Welcome to Szilveszter's development board"
+#define uart_initialized_message        "UART initialized"
+#define tcpip_stack_initialized_message "TCP stack initialized"
+#define connecting_to_wifi_node_message "Connecting to WiFi"
+#define connecting_to_server_message    "Connecting to the server"
+#define tcp_welcome_message_for_server  "Hello World I'm here"
+
+/* *****************************************************************************
+ * Global Variables
+ * ****************************************************************************/
+uint8_t fivesec = 0;
+uint16_t tcp_message_rest = 0;
+
+
+/* *****************************************************************************
+ * Function Prototypes
+ * ****************************************************************************/
 void Init();
-void debugMessage(char * str);
-
+void debugMessage(const char * str);
+void generalTasks(void);
 // interrupt handlers declarations
 void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void);
 
-/*
- * 
- */
+
+/* *****************************************************************************
+ * Main
+ * ****************************************************************************/
 int main(int argc, char** argv) {
 
     Init();
@@ -46,13 +66,14 @@ int main(int argc, char** argv) {
     while(1) {
         StackTask();
         StackApplications();
+        generalTasks();
     }
 
     return (EXIT_SUCCESS);
 }
 
 /*
- * 
+ * Main init function 
  */
 void Init() {
 
@@ -73,43 +94,49 @@ void Init() {
     INTCONbits.SS0 = 0;                 // Single vector is not presented with a shadow register set
     INTCONbits.TPC = 0b000;             // Disables proximity timer
 
-    // set up timer2
-    T2CONCLR = 0b10;                    // clock source = Internal peripheral clock
-    T2CONbits.TCKPS = 0b111;            // Timer Input Clock Prescale Select bits
-//    PR2SET = 1000;
-    PR2SET = 39062;                     // period register, when this register is match 
+    // set up timer3
+    T3CONCLR = 0b10;                    // clock source = Internal peripheral clock
+    T3CONbits.TCKPS = 0b111;            // Timer Input Clock Prescale Select bits
+    PR3SET = 19531;                     // period register, when this register is match 
                                         // with the count register an interrupt occurs
-    IEC0bits.T2IE = 1;                  // enable interrupt for timer2
-    IPC2bits.T2IP = 0b111;              // priority level is 7
-    IPC2bits.T2IS = 0;                  // sub priority is 0
+    IEC0bits.T3IE = 1;                  // enable interrupt for timer3
+    IPC3bits.T3IP = 0b111;              // priority level is 7
+    IPC3bits.T3IS = 0;                  // sub priority is 0
+    T3CONbits.ON = 1;                   // turn on the timer3
     
     // init UART module1
     initUART_1();
-    debugMessage("Welcome to Szilveszter's development board");
-    debugMessage("UART initialized");
+    debugMessage(welcome_message);
+    debugMessage(uart_initialized_message);
     
     // init TCP/IP stack
     TickInit();
     InitAppConfig();
     StackInit();
-    debugMessage("TCP stack initialized");
+    debugMessage(tcpip_stack_initialized_message);
     
-    T2CONbits.ON = 1;                   // turn on the timer2
-    
+    // Connect the wifi
     #if defined(WF_CS_TRIS)
         WF_Connect();
-        debugMessage("Connecting");
+        debugMessage(connecting_to_wifi_node_message);
     #endif
 }
 
-void __ISR(_TIMER_2_VECTOR, IPL7SRS) Timer1Handler(void) {
+// Interrupt handler
+void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer1Handler(void) {
     LATFINV = 1; // invert the LATF LSB(last significant bit) - it is connected to a led
     
-    TMR2CLR = 0xFFFF; // clear the timer count register
-    IFS0bits.T2IF = 0; // clear timer1 interrupt status flag
+    TMR3CLR = 0xFFFF; // clear the timer count register
+    IFS0bits.T3IF = 0; // clear timer3 interrupt status flag
+    
+    if( ++fivesec > 10){
+        if( tcpPushMessage(tcp_welcome_message_for_server) ){
+            fivesec = 0;
+        }
+    }
 }
 
-void debugMessage(char * str){
+void debugMessage(const char * str){
     SendDataBuffer(str,strlen(str));
     
     // send new line feed
@@ -118,4 +145,15 @@ void debugMessage(char * str){
     SendDataBuffer(buf,strlen(buf));
 }
 
+void generalTasks(void){
+    // return if the wifi module is not connected
+    if( !WF_isConnected()) return;
+    
+    // create a new TCP socket if it is not already created
+    if( !TCPInitialized()) {
+        createTcpSocket();
+    } else {
+        tcpProcessing();
+    }
+}
 

@@ -54,13 +54,13 @@
 #define WF_SPI_IF_CLEAR     IFS1CLR
 #define WF_SPI_INT_BITS     0x03800000
 #define WF_SPI_BRG          (SPI2BRG)
-#define WF_MAX_SPI_FREQ     (15000000ul)    // Hz
+#define WF_MAX_SPI_FREQ     (24000000ul)    // Hz
 
 // Compiler information
 //------------------------------------------------------------------------------
 
 // Base RAM and ROM pointer types for given architecture
-#define PTR_BASE        unsigned short
+#define PTR_BASE        unsigned long
 #define ROM_PTR_BASE    unsigned long
 
 // Definitions that apply to all except Microchip MPLAB C Compiler for PIC18 MCUs (C18)
