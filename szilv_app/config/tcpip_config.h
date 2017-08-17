@@ -27,8 +27,9 @@
  * You may need to copy such files from other project folders.
  *
  */
-
+#if defined APP_USE_UART_MESSAGING
 #define STACK_USE_UART                         // Application demo using UART for IP address display and stack configuration
+#endif
 //#define STACK_USE_UART2TCP_BRIDGE            // UART to TCP Bridge application example
 //#define STACK_USE_IP_GLEANING
 #define STACK_USE_ICMP_SERVER                  // Ping query and response capability

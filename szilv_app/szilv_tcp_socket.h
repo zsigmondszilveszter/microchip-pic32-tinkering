@@ -8,17 +8,15 @@
 #ifndef SZILV_TCP_SOCKET_H
 #define	SZILV_TCP_SOCKET_H
 
+#include "constantMessages.h"
 #include "tcpip/tcpip.h"
 
 #define SERVER_IP_BYTE1     192ul
 #define SERVER_IP_BYTE2     168ul
 #define SERVER_IP_BYTE3     0ul
-#define SERVER_IP_BYTE4     107ul
+#define SERVER_IP_BYTE4     24ul
 
 #define serverPort 1988
-#define socketNotCreated_message "socket NOT created, invalid_socket"
-#define socketCreated_message "Socket Created."
-
 bool socket_initialized;
 
 bool TCPInitialized(void);

@@ -5,20 +5,14 @@
  * Created on April 16, 2017, 9:49 AM
  */
 
-
+#include "constantMessages.h"
 #include "szilv_UART.h"
 #include <xc.h>
 
 #define txBufferFull U1STAbits.UTXBF
 
-
+#if defined APP_USE_UART_MESSAGING 
 void initUART_1(){
-    //UART Init
-//    UARTConfigure(UART1, UART_ENABLE_PINS_TX_RX_ONLY);
-//    UARTSetFifoMode(UART1, UART_INTERRUPT_ON_TX_NOT_FULL | UART_INTERRUPT_ON_RX_NOT_EMPTY);
-//    UARTSetLineControl(UART1, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
-//    UARTSetDataRate(UART1, GetPeripheralClock(), 115200);
-//    UARTEnable(UART1, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
     
     // configure UART module 1
     U1MODEbits.ON = 1;          // Enable UART1
@@ -51,3 +45,4 @@ void SendDataBuffer(const char *buffer, int size){
         i++;
     }
 }
+#endif

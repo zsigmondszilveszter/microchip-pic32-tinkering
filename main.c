@@ -22,6 +22,7 @@
 /* *****************************************************************************
  * Szilveszter 
  * ****************************************************************************/
+#include "constantMessages.h"
 // serial communication 
 #include "szilv_UART.h"
 //Microchip TCP/IP stack
@@ -29,21 +30,17 @@
 // tcp socket
 #include "szilv_tcp_socket.h"
 
-/* *****************************************************************************
- * Const
- * ****************************************************************************/
-#define welcome_message                 "Welcome to Szilveszter's development board"
-#define uart_initialized_message        "UART initialized"
-#define tcpip_stack_initialized_message "TCP stack initialized"
-#define connecting_to_wifi_node_message "Connecting to WiFi"
-#define connecting_to_server_message    "Connecting to the server"
-#define tcp_welcome_message_for_server  "Hello World I'm here"
 
 /* *****************************************************************************
  * Global Variables
  * ****************************************************************************/
-uint8_t fivesec = 0;
 uint16_t tcp_message_rest = 0;
+#if defined APP_USE_UART_MESSAGING
+uint8_t fivesec = 0;
+uint32_t counter = 0;
+uint8_t tmp_buf[30] = {0};
+#endif
+
 
 
 /* *****************************************************************************
@@ -97,28 +94,36 @@ void Init() {
     // set up timer3
     T3CONCLR = 0b10;                    // clock source = Internal peripheral clock
     T3CONbits.TCKPS = 0b111;            // Timer Input Clock Prescale Select bits
-    PR3SET = 19531;                     // period register, when this register is match 
+    PR3SET = 10000;
+//    PR3SET = 19531;                     // period register, when this register is match 
                                         // with the count register an interrupt occurs
+                                        // 19531 is 500ms with 10MHz peripheral bus clock and 256 pre-scaler
     IEC0bits.T3IE = 1;                  // enable interrupt for timer3
     IPC3bits.T3IP = 0b111;              // priority level is 7
     IPC3bits.T3IS = 0;                  // sub priority is 0
     T3CONbits.ON = 1;                   // turn on the timer3
     
-    // init UART module1
-    initUART_1();
-    debugMessage(welcome_message);
-    debugMessage(uart_initialized_message);
+    #if defined APP_USE_UART_MESSAGING
+        // init UART module1
+        initUART_1();
+        debugMessage(welcome_message);
+        debugMessage(uart_initialized_message);
+    #endif
     
     // init TCP/IP stack
     TickInit();
     InitAppConfig();
     StackInit();
-    debugMessage(tcpip_stack_initialized_message);
+    #if defined APP_USE_UART_MESSAGING
+        debugMessage(tcpip_stack_initialized_message);
+    #endif
     
     // Connect the wifi
     #if defined(WF_CS_TRIS)
-        WF_Connect();
-        debugMessage(connecting_to_wifi_node_message);
+//        WF_Connect();
+        #if defined APP_USE_UART_MESSAGING
+            debugMessage(connecting_to_wifi_node_message);
+        #endif
     #endif
 }
 
@@ -129,14 +134,22 @@ void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer1Handler(void) {
     TMR3CLR = 0xFFFF; // clear the timer count register
     IFS0bits.T3IF = 0; // clear timer3 interrupt status flag
     
+    #if defined APP_USE_UART_MESSAGING
     if( ++fivesec > 10){
-        if( tcpPushMessage(tcp_welcome_message_for_server) ){
-            fivesec = 0;
+        sprintf(tmp_buf, tcp_welcome_message_for_server" %d",counter);
+        if( TCPInitialized() ){
+            if( tcpPushMessage(tmp_buf) ){
+                counter++;
+            }
         }
+        fivesec = 0;
     }
+    #endif
 }
 
+#if defined APP_USE_UART_MESSAGING 
 void debugMessage(const char * str){
+
     SendDataBuffer(str,strlen(str));
     
     // send new line feed
@@ -144,6 +157,7 @@ void debugMessage(const char * str){
     sprintf(buf,"\n");
     SendDataBuffer(buf,strlen(buf));
 }
+#endif
 
 void generalTasks(void){
     // return if the wifi module is not connected

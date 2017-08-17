@@ -10,7 +10,7 @@ TCP_SOCKET szilv_socket;
 uint8_t * buffer;
 uint16_t buffer_len = 0;
 uint16_t rest = 0;
-
+uint8_t tmp_buf2[30];
 
 
 bool TCPInitialized(){
@@ -27,10 +27,14 @@ bool createTcpSocket(){
     if ( szilv_socket == INVALID_SOCKET) {
         szilv_socket = 0;
         socket_initialized = false;
+        #if defined APP_USE_UART_MESSAGING
         debugMessage(socketNotCreated_message);
+        #endif
         return false;
     } else {
+        #if defined APP_USE_UART_MESSAGING
         debugMessage(socketCreated_message);
+        #endif
         socket_initialized = true;
         return true;
     }
@@ -64,11 +68,14 @@ bool tcpPushMessage(uint8_t * str){
     if( buffer_len ){ // the buffer already contains data
         return false;
     } else {
-        buffer = (uint8_t *) malloc(str_len);
+        buffer = (uint8_t *) malloc(str_len+1);
         if( !buffer){ // if there is not enough memory 
+            #if defined APP_USE_UART_MESSAGING
+            debugMessage(malloc_problem);
+            #endif
             return false;
         }
-        memcpy(buffer, str, str_len);
+        memcpy(buffer, str, str_len+1);
         buffer_len = str_len;
         return true;
     }
@@ -113,6 +120,7 @@ void tcpProcessing(void){
                 TCPFlush(szilv_socket); //try to send the data from TCP TX buffer
                 rest = 0;               // reset
                 buffer_len = 0;         // reset
+                debugMessage(buffer);
                 free(buffer);           // free up the buffer memory
             }
         }

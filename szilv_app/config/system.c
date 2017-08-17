@@ -40,18 +40,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "constantMessages.h"
 #include "tcpip/tcpip.h"
-
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0') 
 
 bool expeciton_sent = false;
 
@@ -92,10 +82,10 @@ void _general_exception_handler(unsigned cause, unsigned status)
 {
     Nop();
     Nop();
-//    if( !expeciton_sent){
-        debugMessage("An Exception occured");
-        expeciton_sent = true;
-//    }
+    #if defined APP_USE_UART_MESSAGING
+        debugMessage(exception_message);
+    #endif
+    expeciton_sent = true;
 }
 #endif
 
@@ -103,6 +93,19 @@ void _general_exception_handler(unsigned cause, unsigned status)
 // Global variables
 uint8_t ConnectionProfileID;
 #endif
+
+#if defined APP_USE_UART_MESSAGING 
+
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
 
 void printBinary(const char * str,uint8_t * c , uint8_t size){
     char i;
@@ -113,7 +116,8 @@ void printBinary(const char * str,uint8_t * c , uint8_t size){
         sprintf(t," "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(c[i]));
         strcat(buf, t);
     }
-    debugMessage(buf);
+    debugMessage(buf); 
+    
 }
 void printHex(const char * str, uint8_t * c , uint8_t size){
     char i;
@@ -121,7 +125,6 @@ void printHex(const char * str, uint8_t * c , uint8_t size){
     strcat(buf, str);
     char t[8];
     if(strlen(c) < size){
-        debugMessage("Handled exception");
         return;
     }
     for(i=0; i<size; i++){
@@ -130,6 +133,7 @@ void printHex(const char * str, uint8_t * c , uint8_t size){
     }
     debugMessage(buf);
 }
+#endif
 
 static ROM uint8_t SerializedMACAddress[6] = {MY_DEFAULT_MAC_BYTE1, MY_DEFAULT_MAC_BYTE2, MY_DEFAULT_MAC_BYTE3, MY_DEFAULT_MAC_BYTE4, MY_DEFAULT_MAC_BYTE5, MY_DEFAULT_MAC_BYTE6};
 void InitAppConfig(void) {

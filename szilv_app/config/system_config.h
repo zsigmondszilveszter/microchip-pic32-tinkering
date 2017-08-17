@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "constantMessages.h"
+
 #include "system.h"
 
 #include "tcpip_config.h"
