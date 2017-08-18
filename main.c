@@ -51,7 +51,7 @@ void Init();
 void debugMessage(const char * str);
 void generalTasks(void);
 // interrupt handlers declarations
-void __ISR(_TIMER_1_VECTOR, IPL7SRS) Timer1Handler(void);
+void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer3Handler(void);
 
 
 /* *****************************************************************************
@@ -129,7 +129,7 @@ void Init() {
 }
 
 // Interrupt handler
-void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer1Handler(void) {
+void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer3Handler(void) {
     LATFINV = 1; // invert the LATF LSB(last significant bit) - it is connected to a led
     
     TMR3CLR = 0xFFFF; // clear the timer count register

@@ -107,7 +107,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define MY_DEFAULT_WIFI_SECURITY_MODE       WF_SECURITY_WPA2_WITH_PASS_PHRASE
 #define MY_DEFAULT_SCAN_TYPE                WF_ACTIVE_SCAN            /* WF_ACTIVE_SCAN or WF_PASSIVE_SCAN */
 #define MY_DEFAULT_BEACON_TIMEOUT           (40)                      /* Number of beacon periods          */
-#define MY_DEFAULT_SSID_NAME                "UPCEA3CEBD"        /* if WF_SECURITY_WPS_PUSH_BUTTON must be "" (empty string) */
+//#define MY_DEFAULT_SSID_NAME                "UPCEA3CEBD"        /* if WF_SECURITY_WPS_PUSH_BUTTON must be "" (empty string) */
+#define MY_DEFAULT_SSID_NAME                "CiscoSv"        /* if WF_SECURITY_WPS_PUSH_BUTTON must be "" (empty string) */
 #if defined(__XC8)
 #define MY_DEFAULT_CHANNEL_LIST             {1,2,3,4,5,6,7,8,9,10,11} /* Default channel list for FCC */
 #else
@@ -196,7 +197,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 //-----------------------------------------------------------------------------------
 // Default pass phrase used for WF_SECURITY_WPA_AUTO_WITH_PASS_PHRASE security mode
 //-----------------------------------------------------------------------------------
-#define MY_DEFAULT_PSK_PHRASE "MQk6whjrxf4t"
+//#define MY_DEFAULT_PSK_PHRASE "MQk6whjrxf4t"
+#define MY_DEFAULT_PSK_PHRASE "vekonydeszkakerites"
 
 // If using security mode of WF_SECURITY_WPA_AUTO_WITH_KEY, then this section
 // must be set to match the key for MY_DEFAULT_SSID_NAME and MY_DEFAULT_PSK_PHRASE
@@ -208,11 +210,16 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 //"\xE0\x19\x95\x77\x9A\xDA\x7B\x38"\
 //"\xD6\x73\x2A\x32\x98\x1C\x1B\x30"\
 //"\x32\x0A\xBF\xFA\x29\x70\x23\x52")
+//#define MY_DEFAULT_PSK (\
+//"\xfd\x48\x2e\xf0\xb3\xd0\x38\xfb"\
+//"\x4a\x6f\x25\xf7\xf9\x1f\x04\x34"\
+//"\x78\xd3\x96\x90\xd7\x71\x85\x4f"\
+//"\xb3\x52\x26\xab\x09\x55\xa4\xf8")
     #define MY_DEFAULT_PSK (\
-"\xfd\x48\x2e\xf0\xb3\xd0\x38\xfb"\
-"\x4a\x6f\x25\xf7\xf9\x1f\x04\x34"\
-"\x78\xd3\x96\x90\xd7\x71\x85\x4f"\
-"\xb3\x52\x26\xab\x09\x55\xa4\xf8")
+"\xba\x04\xe0\x48\x0c\xdf\xb1\x1d"\
+"\x47\x82\x70\x52\x61\xc2\xe0\x0a"\
+"\x04\x99\xc8\xd1\x8b\x4b\x4e\x25"\
+"\x04\x46\xf2\x2e\x07\xc3\x80\xf0")
 // Do not indent above string as it will inject spaces
 
 /*** Selecting Event Notification Type ***/
