@@ -120,7 +120,6 @@ void tcpProcessing(void){
                 TCPFlush(szilv_socket); //try to send the data from TCP TX buffer
                 rest = 0;               // reset
                 buffer_len = 0;         // reset
-                debugMessage(buffer);
                 free(buffer);           // free up the buffer memory
             }
         }

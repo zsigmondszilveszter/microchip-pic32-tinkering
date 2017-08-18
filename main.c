@@ -17,6 +17,7 @@
 #pragma config FPLLODIV     = DIV_1     // PLL output divider
 #pragma config FPBDIV       = DIV_8     // Peripheral bus clock divider
 #pragma config FSOSCEN      = OFF       // Secondary oscillator enable
+#pragma config FWDTEN       = OFF       // disable watchdog timer
 
 
 /* *****************************************************************************
@@ -120,7 +121,7 @@ void Init() {
     
     // Connect the wifi
     #if defined(WF_CS_TRIS)
-//        WF_Connect();
+        WF_Connect();
         #if defined APP_USE_UART_MESSAGING
             debugMessage(connecting_to_wifi_node_message);
         #endif
