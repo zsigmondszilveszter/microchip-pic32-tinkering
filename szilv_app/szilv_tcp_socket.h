@@ -14,7 +14,7 @@
 #define SERVER_IP_BYTE1     192ul
 #define SERVER_IP_BYTE2     168ul
 #define SERVER_IP_BYTE3     1ul
-#define SERVER_IP_BYTE4     3ul
+#define SERVER_IP_BYTE4     6ul
 
 #define serverPort 1988
 bool socket_initialized;

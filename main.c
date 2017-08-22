@@ -136,15 +136,15 @@ void __ISR(_TIMER_3_VECTOR, IPL7SRS) Timer3Handler(void) {
     IFS0bits.T3IF = 0; // clear timer3 interrupt status flag
     
     #if defined APP_USE_UART_MESSAGING
-    if( ++fivesec > 10){
-        sprintf(tmp_buf, tcp_welcome_message_for_server" %d",counter);
+//    if( ++fivesec > 10){
         if( TCPInitialized() ){
+            sprintf(tmp_buf, tcp_welcome_message_for_server" %d",counter);
             if( tcpPushMessage(tmp_buf) ){
                 counter++;
             }
         }
-        fivesec = 0;
-    }
+//        fivesec = 0;
+//    }
     #endif
 }
 

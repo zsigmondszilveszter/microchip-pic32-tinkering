@@ -1,8 +1,11 @@
 
 #include "szilv_tcp_socket.h"
 
+// flags
 bool socket_initialized = false;
+bool socket_connected = false;
 
+// variables
 uint32_t server_ip_address = SERVER_IP_BYTE1 | SERVER_IP_BYTE2 << 8ul | SERVER_IP_BYTE3 << 16ul | SERVER_IP_BYTE4 << 24ul;
 static ROM uint8_t SerializedMACAddress[6] = {MY_DEFAULT_MAC_BYTE1, MY_DEFAULT_MAC_BYTE2, MY_DEFAULT_MAC_BYTE3, MY_DEFAULT_MAC_BYTE4, MY_DEFAULT_MAC_BYTE5, MY_DEFAULT_MAC_BYTE6};
 TCP_SOCKET szilv_socket;
@@ -24,6 +27,8 @@ bool createTcpSocket(){
     
     // open a new socket client
     szilv_socket = TCPOpen(server_ip_address, TCP_OPEN_IP_ADDRESS, serverPort, TCP_PURPOSE_GENERIC_TCP_CLIENT );
+    // an useless call
+    TCPWasReset(szilv_socket);
     if ( szilv_socket == INVALID_SOCKET) {
         szilv_socket = 0;
         socket_initialized = false;
@@ -105,11 +110,15 @@ bool tcpPushMessage(uint8_t * str){
   Remarks:
  ***************************************************************************/
 void tcpProcessing(void){
-    if( TCPIsConnected(szilv_socket) && !TCPWasReset(szilv_socket) ){// we are connected to the server
+    if( TCPIsConnected(szilv_socket) ){// we are connected to the server
+        socket_connected = true;
+        if( TCPWasReset(szilv_socket)){
+            goto closeSocket;
+        }
         
         // if the buffer contains data
         if ( buffer_len ){
-            if( !TCPIsPutReady(szilv_socket) ) return; // if there is no space in the tcp tc buffer
+            if( !TCPIsPutReady(szilv_socket) ) return; // if there is no space in the tcp tx buffer
 
             // try to push the remaining data to the TCP TX buffer
             rest += TCPPutArray(szilv_socket, buffer+rest, buffer_len-rest );
@@ -123,5 +132,10 @@ void tcpProcessing(void){
                 free(buffer);           // free up the buffer memory
             }
         }
+    } else if(socket_initialized && socket_connected){
+        closeSocket:
+        socket_initialized = false;
+        socket_connected = false;
+        TCPClose(szilv_socket);
     }
 }
